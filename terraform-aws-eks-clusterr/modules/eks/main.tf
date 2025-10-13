@@ -1,7 +1,7 @@
 resource "aws_eks_cluster" "this" {
   name     = var.cluster_name
   role_arn = var.cluster_iam_role_arn
-  version  = "1.27"
+  version  = "1.29"
 
   vpc_config {
     subnet_ids = var.public_subnet_ids
