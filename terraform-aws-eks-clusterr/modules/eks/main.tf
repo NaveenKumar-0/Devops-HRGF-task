@@ -1,21 +1,27 @@
-module "eks" {
-  source          = "terraform-aws-modules/eks/aws"
-  cluster_name    = var.cluster_name
-  cluster_version = "1.27"
-  subnets         = var.public_subnet_ids
-  vpc_id          = var.vpc_id
-  cluster_iam_role_name = var.cluster_iam_role_arn
-  node_groups = {
-    eks_nodes = {
-      desired_capacity = var.desired_capacity
-      max_capacity     = var.max_capacity
-      min_capacity     = var.min_capacity
-      instance_type    = var.node_instance_type
-      iam_role_arn     = var.node_group_iam_role_arn
-    }
+resource "aws_eks_cluster" "this" {
+  name     = var.cluster_name
+  role_arn = var.cluster_iam_role_arn
+  version  = "1.27"
+
+  vpc_config {
+    subnet_ids = var.public_subnet_ids
   }
-  tags = {
-    Environment = "dev"
+
+  depends_on = [var.cluster_iam_role_arn]
+}
+
+resource "aws_eks_node_group" "this" {
+  cluster_name    = aws_eks_cluster.this.name
+  node_group_name = "${var.cluster_name}-node-group"
+  node_role_arn   = var.node_group_iam_role_arn
+  subnet_ids      = var.public_subnet_ids
+
+  scaling_config {
+    desired_size = var.desired_capacity
+    max_size     = var.max_capacity
+    min_size     = var.min_capacity
   }
+
+  instance_types = [var.node_instance_type]
 }
 
