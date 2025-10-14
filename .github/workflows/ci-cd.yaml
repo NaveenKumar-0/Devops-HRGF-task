@@ -6,6 +6,7 @@ on:
     branches: [main]
   pull_request:
     branches: [main]
+    types: [closed]
 
 # Define reusable secrets for DockerHub and Kubernetes
 permissions:
@@ -143,3 +144,17 @@ jobs:
             }
         env:
           SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK }}
+
+      - name: Verify deployment
+        run: |
+          kubectl rollout status deployment/hello-world
+          kubectl get pods\
+
+      - name: Run smoke tests
+        run: |
+          kubectl get service hello-world
+          ELB_HOST=$(kubectl get ingress hello-world-ingress -o jsonpath='{.status.loadBalancer.ingress[0].hostname}')
+          echo "ELB hostname: $ELB_HOST"
+          curl http://$ELB_HOST
+
+
