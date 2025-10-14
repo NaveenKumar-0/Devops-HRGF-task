@@ -14,10 +14,10 @@ terraform {
       version = ">= 2.10"
     }
   }
-  /* backend "s3" {
-   bucket = "mybucket"
-   key    = "path/to/my/key"
-   region = "us-east-1"
-   use_lockfile = true
-  } */
+  backend "s3" {
+    bucket       = "ekscluster-terraform-state-hrgf"
+    key          = "eks/my-cluster/terraform.tfstate"
+    region       = "ap-south-1"
+    use_lockfile = true
+  }
 }

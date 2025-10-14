@@ -1,0 +1,25 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+
+# Reference the base manifests
+resources:
+  - ../../base
+
+# Namespace for prod
+namespace: prod
+
+# Override image for prod
+images:
+  - name: naveenk0/hello-world
+    newTag: v1.1.0   # your prod version
+    newName: naveenk0/hello-world
+
+# Optional: override replicas
+patchesStrategicMerge:
+  - prod-patch.yaml
+
+# Common labels for prod
+commonLabels:
+  app: hello-world
+  environment: production
+

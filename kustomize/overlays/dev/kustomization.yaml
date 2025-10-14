@@ -1,0 +1,20 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+
+namespace: dev
+resources:
+  - ../../base
+
+images:
+  - name: naveenk0/hello-world
+    newTag: v1.1.0
+
+configMapGenerator:
+  - name: app-config
+    literals:
+      - ENV=dev
+      - LOG_LEVEL=debug
+
+commonLabels:
+  environment: dev
+
