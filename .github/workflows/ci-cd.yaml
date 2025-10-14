@@ -113,10 +113,7 @@ jobs:
       # Update kubeconfig for EKS cluster
       - name: Update kubeconfig
         run: |
-          aws eks update-kubeconfig \
-            --region ${{ secrets.AWS_REGION }} \
-            --name ${{ secrets.EKS_CLUSTER_NAME }}
-
+          aws eks update-kubeconfig --region ${{ env.AWS_REGION }} --name ${{ env.EKS_CLUSTER_NAME }}
       # Set image tag from CI job
       - name: Set Image Tag
         run: echo "IMAGE_TAG=${{ needs.ci.outputs.image-tag }}" >> $GITHUB_ENV
