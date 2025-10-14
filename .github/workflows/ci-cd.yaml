@@ -13,6 +13,10 @@ permissions:
 
 env:
   IMAGE_NAME: ${{ secrets.DOCKER_USERNAME }}/hello-world
+  AWS_REGION: ${{ secrets.AWS_REGION }}
+  EKS_CLUSTER_NAME: ${{ secrets.EKS_CLUSTER_NAME }}
+  AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+  AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
 
 jobs:
   # -----------------------------
@@ -113,7 +117,8 @@ jobs:
       # Update kubeconfig for EKS cluster
       - name: Update kubeconfig
         run: |
-          aws eks update-kubeconfig --region ${{ env.AWS_REGION }} --name ${{ env.EKS_CLUSTER_NAME }}
+          aws eks update-kubeconfig --region $AWS_REGION --name $EKS_CLUSTER_NAME
+
       # Set image tag from CI job
       - name: Set Image Tag
         run: echo "IMAGE_TAG=${{ needs.ci.outputs.image-tag }}" >> $GITHUB_ENV
@@ -121,7 +126,7 @@ jobs:
       # Apply manifests using Kustomize (production)
       - name: Deploy to Kubernetes
         run: |
-          kubectl apply -k k8s/overlays/prod
+          kubectl apply -k kustomize/base
 
       # Optional: Slack notification
       - name: Notify Slack
