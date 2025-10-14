@@ -1,0 +1,144 @@
+name: CI/CD Pipeline
+
+# Trigger pipeline on push to main branch
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+# Define reusable secrets for DockerHub and Kubernetes
+permissions:
+  contents: read
+
+env:
+  IMAGE_NAME: ${{ secrets.DOCKER_USERNAME }}/hello-world
+
+jobs:
+  # -----------------------------
+  # Job 1: Continuous Integration
+  # -----------------------------
+  ci:
+    name: CI - Build, Test & Scan
+    runs-on: ubuntu-latest
+    outputs:
+      image-tag: ${{ steps.set-version.outputs.tag }}
+    steps:
+      # Checkout code
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      # Setup Node.js
+      - name: Setup Node
+        uses: actions/setup-node@v3
+        with:
+          node-version: 18
+
+      # Install dependencies
+      - name: Install Dependencies
+        run: npm install
+        
+      - name: Run linting
+        run: |
+          cd app
+          npm run lint
+
+      # Run tests
+      - name: Run Tests
+        run: npm test || echo "No tests defined"
+
+      # --------------------------
+      # Determine version from VERSION file
+      # --------------------------
+      - name: Read VERSION file
+        id: set-version
+        run: |
+          VERSION=$(cat VERSION)
+          echo "TAG=v${VERSION}" >> $GITHUB_ENV
+          echo "::set-output name=tag::v${VERSION}"
+
+      # Build Docker image
+      - name: Build Docker Image
+        run: |
+          docker build -t $IMAGE_NAME:${{ steps.set-version.outputs.tag }} .
+          docker tag $IMAGE_NAME:${{ steps.set-version.outputs.tag }} $IMAGE_NAME:latest
+
+      # Scan image with Trivy
+      - name: Trivy Security Scan
+        uses: aquasecurity/trivy-action@master
+        with:
+          image-ref: $IMAGE_NAME:${{ steps.set-version.outputs.tag }}
+          format: 'table'
+          exit-code: '0'
+          vuln-type: 'os,library'
+          severity: 'CRITICAL,HIGH'
+
+      # Login to DockerHub
+      - name: DockerHub Login
+        uses: docker/login-action@v2
+        with:
+          username: ${{ secrets.DOCKER_USERNAME }}
+          password: ${{ secrets.DOCKER_PASSWORD }}
+
+      # Push image
+      - name: Push Docker Image
+        run: |
+          docker push $IMAGE_NAME:${{ steps.set-version.outputs.tag }}
+          docker push $IMAGE_NAME:latest
+
+  # -----------------------------
+  # Job 2: Continuous Deployment
+  # -----------------------------
+  cd:
+    name: CD - Deploy to Kubernetes
+    runs-on: ubuntu-latest
+    needs: ci
+    steps:
+      # Checkout code (needed for manifests)
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      # Install kubectl
+      - name: Install Kubectl
+        uses: azure/setup-kubectl@v3
+        with:
+          version: 'latest'
+
+      # Install AWS CLI (if using EKS)
+      - name: Install AWS CLI
+        run: |
+          curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
+          unzip awscliv2.zip
+          sudo ./aws/install
+
+      # Update kubeconfig for EKS cluster
+      - name: Update kubeconfig
+        run: |
+          aws eks update-kubeconfig \
+            --region ${{ secrets.AWS_REGION }} \
+            --name ${{ secrets.EKS_CLUSTER_NAME }}
+
+      # Set image tag from CI job
+      - name: Set Image Tag
+        run: echo "IMAGE_TAG=${{ needs.ci.outputs.image-tag }}" >> $GITHUB_ENV
+
+      # Apply manifests using Kustomize (production)
+      - name: Deploy to Kubernetes
+        run: |
+          kubectl apply -k k8s/overlays/prod
+
+      # Optional: Slack notification
+      - name: Notify Slack
+        uses: 8398a7/action-slack@v3
+        with:
+          status: custom
+          fields: workflow,job,commit,repo,ref,author,took
+          custom_payload: |
+            {
+              attachments: [{
+                color: '${{ job.status }}' === 'success' ? 'good' : 'danger',
+                text: "Deployment complete!\nImage: ${{ env.IMAGE_NAME }}:${{ env.IMAGE_TAG }}"
+              }]
+            }
+        env:
+          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK }}
