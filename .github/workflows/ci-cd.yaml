@@ -4,9 +4,7 @@ name: CI/CD Pipeline
 on:
   push:
     branches: [main]
-  pull_request:
-    branches: [main]
-    types: [closed]
+
 
 # Define reusable secrets for DockerHub and Kubernetes
 permissions:
