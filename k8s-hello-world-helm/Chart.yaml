@@ -1,7 +1,0 @@
-apiVersion: v2
-name: k8s-hello-world-helm
-description: A Helm chart to deploy Node.js hello-world app
-type: application
-version: 0.1.0
-appVersion: "v1"
-
