@@ -40,9 +40,8 @@ jobs:
         working-directory: app
         
       - name: Run linting
-        run: |
-          cd app
-          npm run lint
+        run: npm run lint
+        working-directory: app
 
       # Run tests
       - name: Run Tests
