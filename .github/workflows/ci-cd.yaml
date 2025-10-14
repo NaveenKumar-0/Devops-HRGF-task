@@ -105,12 +105,10 @@ jobs:
         with:
           version: 'latest'
 
-      # Install AWS CLI (if using EKS)
-      - name: Install AWS CLI
+      #  AWS CLI 
+      - name: AWS CLI vesion
         run: |
-          curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
-          unzip awscliv2.zip
-          sudo ./aws/install
+          aws --version
 
       # Update kubeconfig for EKS cluster
       - name: Update kubeconfig
