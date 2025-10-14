@@ -16,7 +16,7 @@ spec:
     spec:
       containers:
         - name: hello-world
-          image: naveenk0/hello-world:v1
+          image: naveenk0/hello-world:latest
           ports:
             - containerPort: 3000  # Node.js app usually runs on 3000
 
