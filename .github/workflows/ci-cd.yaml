@@ -61,7 +61,7 @@ jobs:
       # Build Docker image
       - name: Build Docker Image
         run: |
-          docker build -t $IMAGE_NAME:${{ steps.set-version.outputs.tag }} .
+          docker build -t $IMAGE_NAME:${{ steps.set-version.outputs.tag }} ./app
           docker tag $IMAGE_NAME:${{ steps.set-version.outputs.tag }} $IMAGE_NAME:latest
 
       # Scan image with Trivy
