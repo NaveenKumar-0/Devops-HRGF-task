@@ -36,7 +36,8 @@ jobs:
 
       # Install dependencies
       - name: Install Dependencies
-        run: npm install
+        run: |
+          npm install
         
       - name: Run linting
         run: |
@@ -45,7 +46,8 @@ jobs:
 
       # Run tests
       - name: Run Tests
-        run: npm test || echo "No tests defined"
+        run: |
+          npm test || echo "No tests defined"
 
       # --------------------------
       # Determine version from VERSION file
