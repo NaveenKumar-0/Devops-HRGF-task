@@ -74,7 +74,7 @@ jobs:
             --namespace monitoring \
             --create-namespace \
             --set adminPassword=admin \
-            --set service.type=ClusterIP
+            --set service.type=ClusterIP \
             --set persistence.enabled=false \
             --set sidecar.dashboards.enabled=true \
             --set sidecar.dashboards.label=grafana_dashboard
