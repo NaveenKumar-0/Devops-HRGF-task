@@ -158,14 +158,8 @@ jobs:
     name: Deploy Observability Stack
     needs: cd 
     uses: NaveenKumar-0/Devops-HRGF-task/.github/workflows/observability.yaml@main
-    with:
-      aws_access_key_id: ${{ env.AWS_ACCESS_KEY_ID }}
-      aws_secret_access_key: ${{ env.AWS_SECRET_ACCESS_KEY }}
-      aws_region: ${{ env.AWS_REGION }}
-      eks_cluster_name: ${{ env.EKS_CLUSTER_NAME }}
-
-
-        #aws_access_key_id: ${{ secrets.AWS_ACCESS_KEY_ID }}
-        #aws_secret_access_key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-        #aws_region: ${{ secrets.AWS_REGION }}
-        #eks_cluster_name: ${{ secrets.EKS_CLUSTER_NAME }}
+    secrets:
+      aws_access_key_id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+      aws_secret_access_key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+      aws_region: ${{ secrets.AWS_REGION }}
+      eks_cluster_name: ${{ secrets.EKS_CLUSTER_NAME }}
