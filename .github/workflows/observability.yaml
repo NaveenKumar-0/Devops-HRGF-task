@@ -3,6 +3,19 @@ name: Observability Setup (Prometheus, Grafana & CloudWatch)
 on:
   workflow_dispatch:  # Manual trigger
   workflow_call:      # Can be called from other workflows
+    inputs:
+      aws_access_key_id:
+        required: true
+        type: string
+      aws_secret_access_key:
+        required: true
+        type: string
+      aws_region:
+        required: true
+        type: string
+      eks_cluster_name:
+        required: true
+        type: string
 
 jobs:
   deploy-observability:
@@ -15,13 +28,13 @@ jobs:
       - name: Configure AWS credentials
         uses: aws-actions/configure-aws-credentials@v4
         with:
-          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          aws-region: ${{ secrets.AWS_REGION }}
+          aws-access-key-id: ${{ inputs.aws_access_key_id }}
+          aws-secret-access-key: ${{ inputs.aws_secret_access_key }}
+          aws-region: ${{ inputs.aws_region }}
 
       - name: Update kubeconfig
         run: |
-          aws eks update-kubeconfig --region ${{ secrets.AWS_REGION }} --name ${{ secrets.EKS_CLUSTER_NAME }}
+          aws eks update-kubeconfig --region ${{ inputs.aws_region }} --name ${{ inputs.eks_cluster_name }}
 
       - name: Verify cluster connection
         run: kubectl get nodes
@@ -105,7 +118,7 @@ jobs:
           helm repo update
           helm upgrade --install cloudwatch-agent amazon-cloudwatch/cloudwatch-agent \
             --namespace amazon-cloudwatch --create-namespace \
-            --set clusterName=$EKS_CLUSTER_NAME \
+            --set clusterName=${{ inputs.eks_cluster_name }} \
             --set serviceAccount.create=true \
             --set metrics.enabled=true \
             --set logs.enabled=true
