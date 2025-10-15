@@ -155,9 +155,8 @@ jobs:
           curl http://$ELB_HOST
           
   observablitiy:
-    runs-on: ubuntu-latest
+    needs: cd 
     uses: NaveenKumar-0/Devops-HRGF-task/.github/workflows/observability.yaml@main
-    needs: cd
     with:
       aws_access_key_id: ${{ secrets.AWS_ACCESS_KEY_ID }}
       aws_secret_access_key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
