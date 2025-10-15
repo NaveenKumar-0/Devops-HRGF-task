@@ -154,7 +154,8 @@ jobs:
           echo "ELB hostname: $ELB_HOST"
           curl http://$ELB_HOST
           
-  observablitiy:
+  observability:
+    name: Deploy Observability Stack
     needs: cd 
     uses: NaveenKumar-0/Devops-HRGF-task/.github/workflows/observability.yaml@main
     with:
