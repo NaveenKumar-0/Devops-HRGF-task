@@ -117,7 +117,7 @@ jobs:
         run: |
           helm repo add amazon-cloudwatch https://aws.github.io/eks-charts
           helm repo update
-          helm upgrade --install cloudwatch-agent amazon-cloudwatch/cloudwatch-agent \
+          helm upgrade --install cloudwatch-agent amazon-cloudwatch/aws-cloudwatch-metrics \
             --namespace amazon-cloudwatch --create-namespace \
             --set clusterName=${{ secrets.eks_cluster_name }} \
             --set serviceAccount.create=true \
