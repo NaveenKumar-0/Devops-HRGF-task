@@ -1,0 +1,28 @@
+/app/node_modules/
+/app/package-lock.json
+
+# Terraform
+*.tfstate
+*.tfstate.*
+.terraform/
+.terraform.lock.hcl
+terraform.tfvars
+*.tfplan
+*.tfvars
+
+# AWS
+.aws/
+
+# Kubernetes
+*.kubeconfig
+
+# Secrets and sensitive files
+secrets/
+*.pem
+*.key
+*.crt
+*.p12
+*.pfx
+
+
+

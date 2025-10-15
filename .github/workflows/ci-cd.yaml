@@ -18,9 +18,7 @@ env:
   AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
 
 jobs:
-  # -----------------------------
   # Job 1: Continuous Integration
-  # -----------------------------
   ci:
     name: CI - Build, Test & Scan
     runs-on: ubuntu-latest
@@ -51,9 +49,7 @@ jobs:
         run: npm test || echo "No tests defined"
         working-directory: app
 
-      # --------------------------
       # Determine version from VERSION file
-      # --------------------------
       - name: Read VERSION file
         id: set-version
         run: |
@@ -90,9 +86,7 @@ jobs:
           docker push $IMAGE_NAME:${{ steps.set-version.outputs.tag }}
           docker push $IMAGE_NAME:latest
 
-  # -----------------------------
   # Job 2: Continuous Deployment
-  # -----------------------------
   cd:
     name: CD - Deploy to Kubernetes
     runs-on: ubuntu-latest
@@ -127,7 +121,7 @@ jobs:
         run: |
           kubectl apply -k kustomize/base
 
-      # Optional: Slack notification
+      # Slack notification
       - name: Notify Slack
         uses: 8398a7/action-slack@v3
         with:
@@ -154,5 +148,9 @@ jobs:
           ELB_HOST=$(kubectl get ingress hello-world-ingress -o jsonpath='{.status.loadBalancer.ingress[0].hostname}')
           echo "ELB hostname: $ELB_HOST"
           curl http://$ELB_HOST
+
+      - name: Setup Observability Stack
+        uses: ./.github/workflows/observability.yaml
+        with: {}
 
 

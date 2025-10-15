@@ -1,0 +1,142 @@
+name: Observability Setup (Prometheus, Grafana & CloudWatch)
+
+on:
+  workflow_dispatch:  # Manual trigger
+  workflow_call:      # Can be called from other workflows
+
+jobs:
+  deploy-observability:
+    runs-on: ubuntu-latest
+
+    env:
+      AWS_REGION: ${{ secrets.AWS_REGION }}
+      EKS_CLUSTER_NAME: ${{ secrets.EKS_CLUSTER_NAME }}
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: $AWS_REGION
+
+      - name: Update kubeconfig
+        run: |
+          aws eks update-kubeconfig --region $AWS_REGION --name $EKS_CLUSTER_NAME
+
+      - name: Verify cluster connection
+        run: kubectl get nodes
+
+      # ---------------------------
+      # Install Metrics Server
+      # ---------------------------
+      - name: Deploy Metrics Server
+        run: |
+          kubectl apply -f https://github.com/kubernetes-sigs/metrics-server/releases/latest/download/components.yaml
+          kubectl get deployment metrics-server -n kube-system
+
+      # ---------------------------
+      # Install Helm
+      # ---------------------------
+      - name: Install Helm
+        run: |
+          curl https://raw.githubusercontent.com/helm/helm/main/scripts/get-helm-3 | bash
+
+      # ---------------------------
+      # Deploy Prometheus
+      # ---------------------------
+      - name: Deploy Prometheus
+        run: |
+          helm repo add prometheus-community https://prometheus-community.github.io/helm-charts
+          helm repo update
+          helm upgrade --install prometheus prometheus-community/prometheus \
+            --namespace monitoring --create-namespace \
+            --set server.persistentVolume.enabled=false \
+            --set server.service.type=ClusterIP
+
+      # ---------------------------
+      # Deploy Grafana
+      # ---------------------------
+      - name: Deploy Grafana
+        run: |
+          helm upgrade --install grafana prometheus-community/grafana \
+            --namespace monitoring \
+            --set adminPassword=admin \
+            --set service.type=ClusterIP \
+            --set persistence.enabled=false \
+            --set sidecar.dashboards.enabled=true \
+            --set sidecar.dashboards.label=grafana_dashboard
+
+      # ---------------------------
+      # Add default Grafana dashboard
+      # ---------------------------
+      - name: Add default Grafana dashboard
+        run: |
+          kubectl create configmap grafana-dashboards \
+            --namespace monitoring \
+            --from-literal=cluster-dashboard.json='
+            {
+              "annotations": {"list": []},
+              "panels": [
+                {
+                  "title": "CPU Usage (Cluster)",
+                  "type": "graph",
+                  "targets": [{"expr": "sum(rate(container_cpu_usage_seconds_total[5m])) by (namespace)","legendFormat": "{{namespace}}"}]
+                },
+                {
+                  "title": "Memory Usage (Cluster)",
+                  "type": "graph",
+                  "targets": [{"expr": "sum(container_memory_usage_bytes) by (namespace)","legendFormat": "{{namespace}}"}]
+                }
+              ],
+              "schemaVersion": 16,
+              "title": "Cluster Metrics",
+              "version": 1
+            }' \
+            --dry-run=client -o yaml | kubectl apply -f -
+
+          kubectl label configmap grafana-dashboards grafana_dashboard=1 -n monitoring --overwrite
+
+      # ---------------------------
+      # Deploy CloudWatch Container Insights (Metrics)
+      # ---------------------------
+      - name: Deploy CloudWatch Container Insights
+        run: |
+          helm repo add amazon-cloudwatch https://aws.github.io/eks-charts
+          helm repo update
+          helm upgrade --install cloudwatch-agent amazon-cloudwatch/cloudwatch-agent \
+            --namespace amazon-cloudwatch --create-namespace \
+            --set clusterName=$EKS_CLUSTER_NAME \
+            --set serviceAccount.create=true \
+            --set metrics.enabled=true \
+            --set logs.enabled=true
+
+      # ---------------------------
+      # Deploy Fluent Bit for CloudWatch Logs
+      # ---------------------------
+      - name: Deploy Fluent Bit
+        run: |
+          kubectl apply -f https://raw.githubusercontent.com/aws/amazon-cloudwatch-logs-for-fluent-bit/main/deployment/fluent-bit-eks.yaml
+
+      # ---------------------------
+      # Verify Observability Stack
+      # ---------------------------
+      - name: Verify Observability Stack
+        run: |
+          kubectl get pods -n monitoring
+          kubectl get pods -n amazon-cloudwatch
+          kubectl get svc -n monitoring
+          kubectl get svc -n amazon-cloudwatch
+
+      # ---------------------------
+      # Access Instructions (Prometheus/Grafana locally)
+      # ---------------------------
+      - name: Access Grafana & Prometheus locally
+        run: |
+          echo "Grafana: kubectl port-forward svc/grafana 3000:80 -n monitoring"
+          echo "Prometheus: kubectl port-forward svc/prometheus-server 9090:80 -n monitoring"
+          echo "Then open in browser: http://localhost:3000 (Grafana) and http://localhost:9090 (Prometheus)"
+
