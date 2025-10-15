@@ -122,6 +122,9 @@ jobs:
           kubectl apply -k kustomize/base
 
       # Slack notification
+      - name: Set timestamp
+        run: echo "TIMESTAMP=$(date +%s)" >> $GITHUB_ENV
+
       - name: Notify Slack
         uses: 8398a7/action-slack@v3
         with:
@@ -131,7 +134,9 @@ jobs:
             {
               attachments: [{
                 color: '${{ job.status }}' === 'success' ? 'good' : 'danger',
-                text: "Deployment complete!\nImage: ${{ env.IMAGE_NAME }}:${{ env.IMAGE_TAG }}"
+                text: "Deployment complete!\nImage: ${{ env.IMAGE_NAME }}:${{ env.IMAGE_TAG }}",
+                footer: "CI/CD Pipeline",
+                ts: ${{ env.TIMESTAMP }}
               }]
             }
         env:
