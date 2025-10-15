@@ -6,16 +6,12 @@ on:
     secrets:
       aws_access_key_id:
         required: true
-        type: string
       aws_secret_access_key:
         required: true
-        type: string
       aws_region:
         required: true
-        type: string
       eks_cluster_name:
         required: true
-        type: string
 
 jobs:
   deploy-observability:
