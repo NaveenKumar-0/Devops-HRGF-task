@@ -72,6 +72,7 @@ jobs:
             --create-namespace \
             --set adminPassword=admin \
             --set service.type=NodePort \
+            --set service.nodePort=30800 \
             --set persistence.enabled=false \
             --set sidecar.dashboards.enabled=true \
             --set sidecar.dashboards.label=grafana_dashboard
