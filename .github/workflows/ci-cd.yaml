@@ -155,10 +155,11 @@ jobs:
           curl http://$ELB_HOST
           
   observablitiy:
+    runs-on: ubuntu-latest
     uses: NaveenKumar-0/Devops-HRGF-task/.github/workflows/observability.yaml@main
     needs: cd
     with:
-      AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
-      AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-      AWS_REGION: ${{ secrets.AWS_REGION }}
-      EKS_CLUSTER_NAME: ${{ secrets.EKS_CLUSTER_NAME }}
+      aws_access_key_id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+      aws_secret_access_key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+      aws_region: ${{ secrets.AWS_REGION }}
+      eks_cluster_name: ${{ secrets.EKS_CLUSTER_NAME }}
