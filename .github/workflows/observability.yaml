@@ -67,15 +67,18 @@ jobs:
       # ---------------------------
       - name: Deploy Grafana
         run: |
-          helm repo add prometheus-community https://prometheus-community.github.io/helm-charts
+          helm repo add grafana https://grafana.github.io/helm-charts
           helm repo update
-          helm upgrade --install grafana prometheus-community/grafana \
+          helm search repo grafana/grafana
+          helm upgrade --install grafana grafana/grafana \
             --namespace monitoring \
+            --create-namespace \
             --set adminPassword=admin \
-            --set service.type=ClusterIP \
+            --set service.type=ClusterIP
             --set persistence.enabled=false \
             --set sidecar.dashboards.enabled=true \
             --set sidecar.dashboards.label=grafana_dashboard
+
 
       # ---------------------------
       # Add default Grafana dashboard
