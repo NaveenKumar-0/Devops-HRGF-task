@@ -129,7 +129,11 @@ jobs:
       # ---------------------------
       - name: Deploy Fluent Bit
         run: |
-          kubectl apply -f https://raw.githubusercontent.com/aws/amazon-cloudwatch-logs-for-fluent-bit/main/deployment/fluent-bit-eks.yaml
+          helm upgrade --install fluent-bit amazon-cloudwatch/aws-for-fluent-bit \
+            --namespace amazon-cloudwatch --create-namespace \
+            --set awsRegion=${{ secrets.AWS_REGION }} \
+            --set clusterName=${{ secrets.EKS_CLUSTER_NAME }} \
+            --set serviceAccount.create=true
 
       # ---------------------------
       # Verify Observability Stack
