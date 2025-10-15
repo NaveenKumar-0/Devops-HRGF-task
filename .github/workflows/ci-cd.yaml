@@ -153,9 +153,7 @@ jobs:
           ELB_HOST=$(kubectl get ingress hello-world-ingress -o jsonpath='{.status.loadBalancer.ingress[0].hostname}')
           echo "ELB hostname: $ELB_HOST"
           curl http://$ELB_HOST
-
-      - name: Setup Observability Stack
-        uses: NaveenKumar-0/Devops-HRGF-task/.github/workflows/observability.yaml@main
-        with: {}
-
-
+          
+  observablitiy:
+    uses: NaveenKumar-0/Devops-HRGF-task/.github/workflows/observability.yaml@main
+    needs: cd
