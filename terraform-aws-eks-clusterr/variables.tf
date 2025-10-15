@@ -11,7 +11,7 @@ variable "node_group_name" {
 }
 
 variable "node_instance_type" {
-  default = "t3.micro"
+  default = "t3.medium"
 }
 
 variable "desired_capacity" {
