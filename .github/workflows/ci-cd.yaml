@@ -155,7 +155,7 @@ jobs:
           curl http://$ELB_HOST
 
       - name: Setup Observability Stack
-        uses: ./.github/workflows/observability.yaml
+        uses: NaveenKumar-0/Devops-HRGF-task/.github/workflows/observability.yaml@main
         with: {}
 
 
