@@ -145,7 +145,7 @@ jobs:
       - name: Verify deployment
         run: |
           kubectl rollout status deployment/hello-world
-          kubectl get pods\
+          kubectl get pods
 
       - name: Run smoke tests
         run: |
