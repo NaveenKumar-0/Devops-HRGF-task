@@ -1,4 +1,4 @@
-# **🚀 End-to-End CI/CD Pipeline for Node.js App Deployment on EKS using GitHub Actions**  
+# **🚀 End-to-End CI/CD Pipeline for Hello World Node.js App Deployment on EKS using GitHub Actions**  
 
 ---
 
@@ -151,50 +151,12 @@ Trivy scans container images for vulnerabilities, enforcing container security b
 
 ---
 
-## **🚀 Recent Improvements**  
-
-This project has been enhanced with the following improvements:
-
-### **🔧 Application Enhancements**
-- ✅ **Enhanced Error Handling** - Better error responses and graceful shutdown
-- ✅ **Health Check Endpoints** - `/health` endpoint for monitoring
-- ✅ **API Endpoints** - RESTful API at `/api/calculate` for programmatic access
-- ✅ **CORS Support** - Cross-origin resource sharing enabled
-- ✅ **Improved UI** - Better styling and user experience
-- ✅ **Graceful Shutdown** - Proper signal handling for container orchestration
-
-### **🐳 Docker & Security Improvements**
-- ✅ **Multi-stage Docker Build** - Optimized image size and security
-- ✅ **Non-root User** - Enhanced security with proper user permissions
-- ✅ **Health Checks** - Built-in container health monitoring
-- ✅ **Signal Handling** - Proper process management with dumb-init
-
-### **☸️ Kubernetes Enhancements**
-- ✅ **Liveness & Readiness Probes** - Better container health monitoring
-- ✅ **Security Context** - Enhanced security with non-root execution
-- ✅ **Resource Management** - Proper CPU and memory limits
-- ✅ **Rolling Updates** - Zero-downtime deployments
-
-### **🔄 CI/CD Pipeline**
-- ✅ **GitHub Actions Workflows** - Automated CI/CD with security scanning
-- ✅ **Multi-Node Testing** - Testing across Node.js 18.x and 20.x
-- ✅ **Security Scanning** - Trivy vulnerability scanning
-- ✅ **Code Quality** - ESLint integration and coverage reporting
-
-### **🛠️ Development Tools**
-- ✅ **Docker Compose** - Local development environment
-- ✅ **ESLint Configuration** - Code quality and consistency
-- ✅ **Comprehensive .gitignore** - Proper version control
-- ✅ **Nginx Configuration** - Local reverse proxy setup
-
----
-
 ## **🔧 Prerequisites**  
 
 Before you proceed, ensure you have the following installed:  
 
 - 🛠 **Node.js (>=18.x)**  
-- 🐳 **Docker & Docker Compose**  
+- 🐳 **Docker**  
 - 🏗️ **Terraform (>=1.0)**  
 - ☸ **kubectl (latest version)**  
 - 🎭 **Kustomize**  
