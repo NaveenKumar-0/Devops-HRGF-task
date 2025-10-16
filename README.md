@@ -2,6 +2,12 @@
 
 ---
 
+![GitHub Actions](https://img.shields.io/github/actions/workflow/status/NaveenKumar-0/Devops-HRGF-task/ci-cd.yaml?branch=main)
+![License](https://img.shields.io/badge/license-MIT-green)
+![Terraform](https://img.shields.io/badge/IaC-Terraform-blue)
+![Kubernetes](https://img.shields.io/badge/Deployed_on-EKS-orange)
+
+
 ![CI/CD Pipeline](doc/images/Ctznv2m%20-%20Imgur.jpg)
 
 ## **📌 Table of Contents**  
@@ -15,7 +21,7 @@
   - [**⚙️ CI/CD Workflow**](#️-cicd-workflow)
      - [**🔨 Build Job**](#-build-job)
      - [**🚀 Deployment Job**](#-deployment-job)
-  - [**📦 Run Iaccode \& cicd pipeline**](#-run-iaccode--cicd-pipeline)
+  - [**📦 Run Iac code \& cicd pipeline**](#-run-iac-code--cicd-pipeline)
   - [**🔄 GitOps Principles**](#-gitops-principles)
   - [**🔒 Security Best Practices**](#-security-best-practices)
   - [**📢 Notifications \& Alerts**](#-notifications--alerts)
@@ -279,7 +285,7 @@ The pipeline has **three main jobs**:
 ---  
 ---
 
-## **📦 Run Iaccode & cicd pipeline** 
+## **📦 Run Iac code & cicd pipeline** 
 
 Folk the repo -> https://github.com/NaveenKumar-0/Devops-HRGF-task <- into github account
 
@@ -397,7 +403,7 @@ Every infrastructure change must be made via a **Git commit**.
 
 🔔 **Slack & Email Notifications**
 
-**SLACK INTEGRATON**
+**SLACK INTEGRATION**
 
 ```bash
 1️⃣ Create a Slack App & Incoming Webhook
@@ -439,7 +445,8 @@ Replace <NODE_IP> with any of the above public IPs.
 
 o	A link to the live, publicly accessible URL of the deployed application
 
-**![URL](a2976e10833364f3188473663ff1287e-1882963728.ap-south-1.elb.amazonaws.com)
+🌐 **Live URL:** http://a2976e10833364f3188473663ff1287e-1882963728.ap-south-1.elb.amazonaws.com
+
 
 ---
 
