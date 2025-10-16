@@ -12,7 +12,7 @@
   - [**📂 Repository Structure**](#-repository-structure)
   - [**Design Choices**](#-design-choices)
   - [**🔧 Prerequisites**](#-prerequisites)
-  - [**CI/CD Pipeline**](#-ci/cd-pipeline)
+  - [**CI/CD Pipeline**](#-cicd-pipeline)
     - [**🔨 CI Job – Build, Test & Scan**](#-ci-job-build-test-scan)
     - [**🚀 CD Job – Deploy to Kubernetes**](#-cd-job-deploy-to-kubernetes)
   - [**💻 How to Run the IaC and CI/CD Pipeline**](#-how-to-run-the-iac-and-ci/cd-pipeline)
