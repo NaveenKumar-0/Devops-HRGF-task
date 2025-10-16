@@ -458,8 +458,7 @@ Access Prometheus at http://<NODE_IP>:30900
 Replace <NODE_IP> with any of the above public IPs.
 ```
 ---
-
-## **📢 Notifications & Alerts**  
+  
 
 ## **📢 APPLICATION URL**
 
