@@ -10,65 +10,6 @@ resource "aws_eks_cluster" "this" {
   depends_on = [var.cluster_iam_role_arn]
 }
 
-resource "aws_security_group" "worker_nodes_sg" {
-  name        = "${var.cluster_name}-worker-sg"
-  description = "EKS worker nodes security group"
-  vpc_id      = var.vpc_id
-
-  # NodePort access for Prometheus/Grafana (example ports)
-  ingress {
-    description = "Allow NodePort range for monitoring"
-    from_port   = 30800
-    to_port     = 30900
-    protocol    = "tcp"
-    cidr_blocks = ["0.0.0.0/0"] # Or restrict to your IPs
-  }
-
-  # Optional: allow SSH if needed
-  ingress {
-    description      = "Allow SSH"
-    from_port        = 22
-    to_port          = 22
-    protocol         = "tcp"
-    cidr_blocks      = ["0.0.0.0/0"]
-  }
-
-  egress {
-    from_port   = 0
-    to_port     = 0
-    protocol    = "-1"
-    cidr_blocks = ["0.0.0.0/0"]
-  }
-
-  tags = {
-    Name = "${var.cluster_name}-worker-sg"
-  }
-}
-
-resource "aws_launch_template" "eks_node_lt" {
-  name_prefix   = "${var.cluster_name}-lt"
-  description   = "Launch template for EKS worker nodes"
-  instance_type = var.node_instance_type
-
-  # Attach the custom SG
-  vpc_security_group_ids = [aws_security_group.worker_nodes_sg.id]
-
-  # Optional: if you want SSH access to nodes
-  key_name = var.key_name
-
-  # Tags for EC2 instances
-  tag_specifications {
-    resource_type = "instance"
-    tags = {
-      Name = "${var.cluster_name}-worker-node"
-    }
-  }
-
-  lifecycle {
-    create_before_destroy = true
-  }
-}
-
 resource "aws_eks_node_group" "this" {
   cluster_name    = aws_eks_cluster.this.name
   node_group_name = "${var.cluster_name}-node-group"
@@ -82,11 +23,4 @@ resource "aws_eks_node_group" "this" {
   }
 
   instance_types = [var.node_instance_type]
-  # Attach the new SG
-  launch_template {
-    id      = aws_launch_template.eks_node_lt.id
-    version = "$Latest"
-  }
-  depends_on = [aws_eks_cluster.this,aws_launch_template.eks_node_lt]
 }
-
