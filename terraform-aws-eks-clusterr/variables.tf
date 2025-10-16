@@ -25,7 +25,3 @@ variable "max_capacity" {
 variable "min_capacity" {
   default = 1
 }
-variable "key_name" {
-  description = "Optional EC2 key pair name for SSH access"
-  default     = null
-}
