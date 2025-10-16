@@ -316,6 +316,7 @@ terraform apply --auto-approve
 
 cd ~/Devops-HRGF-task/
 ```
+
 This will create AWS resources like VPC, EKS cluster, IAM roles, and worker nodes.
 
 After completion, note the EKS cluster name and region for CI/CD.
@@ -372,6 +373,11 @@ AWS_ACCESS_KEY_ID / AWS_SECRET_ACCESS_KEY
 AWS_REGION / EKS_CLUSTER_NAME
 SLACK_WEBHOOK
 ```
+
+Note for Users:
+
+If you clone this repo, add your own DOCKER_USERNAME and DOCKER_PASSWORD as GitHub Secrets so the CI/CD pipeline can push images to your Docker Hub.
+Kubernetes manifest uses my image naveenk0/hello-world:latest — update it with yours if needed.
 
 ## **🔄 GitOps Principles**  
 
