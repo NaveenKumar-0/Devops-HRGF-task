@@ -20,6 +20,8 @@
   - [**🔒 Security Best Practices**](#-security-best-practices)
   - [**📢 Notifications \& Alerts**](#-notifications--alerts)
   - [**📊 Monitoring \& Logging**](#-monitoring--logging)
+  - [📢 **APPLICATION URL**](#-application-url)
+
 
 ---
 
@@ -120,28 +122,47 @@ The repository is structured for **modularity and maintainability**:
 ├── README.md                  # Project documentation and setup guide  
 └── VERSION                    # Tracks application versioning (Semantic Versioning)  
 ```
-'''
+---
 ## **Design Choices**
 
+```tree
+Cloud Provider (AWS)
+--> AWS is the chosen cloud platform due to its robust managed services and scalability.
+--> Components such as EKS (Elastic Kubernetes Service), IAM, VPC, and Load Balancers provide a reliable and production-ready infrastructure foundation.
+
 Infrastructure as Code (IaC)
-Terraform provisions the Kubernetes cluster and related cloud infrastructure, ensuring consistent, version-controlled environment setup.
+--> Terraform is used to provision and manage AWS infrastructure resources such as VPC, EKS cluster, and node groups using a modular structure.
+--> This ensures reusability, version control, and environment consistency across development, staging, and production.
 
-Containerization (Docker & DockerHUB)
-Docker packages the Node.js application into a lightweight, efficient container image optimized for deployment and scalability.
+Containerization (Docker & Docker Hub)
+--> The Node.js application is containerized using Docker, enabling isolated, reproducible builds.
+--> Built images are pushed to Docker Hub for centralized image management and faster deployments.
 
-Deployment Management
-Kustomize templates Kubernetes manifests, providing flexible configuration management and simplifying multi-environment deployments.
+Deployment Management (Kustomize + Kubernetes)
+--> Kustomize manages Kubernetes manifests to simplify configuration across multiple environments (dev, staging, prod).
+--> It enables dynamic customization like changing namespaces, image tags, or environment variables without duplicating YAML files.
 
-CI/CD Pipeline
-GitHub Actions orchestrates the full build-test-deploy workflow, triggered on every push to the main branch. GitHub secrets are used for secure credentials management.
+Ingress Controller (NGINX)
+--> The NGINX Ingress Controller manages external access to services within the Kubernetes cluster.
+
+Ingress provides:
+- Host-based and path-based routing
+- SSL/TLS termination
+- Centralized traffic management
+- Unlike a standard Load Balancer, which only routes traffic based on IP/port, Ingress allows fine-grained URL routing — e.g.:
+- This setup makes it efficient to expose multiple services through a single load balancer endpoint.
+
+CI/CD Pipeline (GitHub Actions)
+--> GitHub Actions automates the entire workflow — build, test, security scan, and deployment — triggered on each push to the main branch.
+--> GitHub Secrets securely store credentials (AWS keys, Docker tokens, Slack webhook, etc.).
+
+--> Slack Integration is added to send real-time build and deployment notifications.
 
 Security Integration
-Lint performs automated code quality and basic security analysis.
-Trivy scans container images for vulnerabilities, enforcing container security before deployment.
+--> Lint performs automated code quality checks to maintain clean and secure codebases.
+--> Trivy scans container images for known vulnerabilities before deployment, enforcing secure delivery practices.
 
----
-
-
+```
 ---
 
 ## **🔧 Prerequisites**  
@@ -336,8 +357,7 @@ sed -i 's/"version": "3.0.0"/"version": "4.0.0"/' app/package.json && sed -i 's/
 
 #regenerate with updated version
 cd ~/Devops-HRGF-task/app
-npm install
-cd 
+npm install 
 
 ```
 
@@ -400,16 +420,50 @@ Every infrastructure change must be made via a **Git commit**.
 
 ## **📢 Notifications & Alerts**  
 
-🔔 **Slack & Email Notifications**  
+🔔 **Slack & Email Notifications**
 
-- **CI/CD Job Updates** – Pipeline status alerts.  
+**SLACK INTEGRATON**
+
+```bash
+1️⃣ Create a Slack App & Incoming Webhook
+
+# Go to 👉 https://api.slack.com/apps  --> Click “Create New App” → “From scratch”
+#Name your app (e.g., GitHub-CICD-Notifier)
+#Choose your workspace
+#In the left sidebar, click “Incoming Webhooks”
+#Enable “Activate Incoming Webhooks”
+#Click “Add New Webhook to Workspace”
+#Choose a channel → Click “Allow”
+#Copy the generated Webhook URL
+```
+Go to Settings → Secrets and variables → Actions ->  Click New repository secret -> Name it: SLACK_WEBHOOK_URL -> Paste your Slack webhook URL.
+  
 
 📡 **Monitoring & Logging**  
 
 - **Prometheus & Grafana** for observability.  
-
 ---
 
 ## **📊 Monitoring & Logging**  
 
 ✅ **Metrics Monitoring** – Tracked using **Prometheus & Grafana**. 
+```bash
+#before accessing, go to aws console -> edit the inbound security group of the cluster nodes -> allow 30800 & 30900
+#at the end of pipleline completion, will get how to access prometheus and grafana like shown below:
+#Worker node public IPs:
+43.205.216.31
+13.201.99.166
+Access Grafana at http://<NODE_IP>:30800
+Access Prometheus at http://<NODE_IP>:30900
+Replace <NODE_IP> with any of the above public IPs.
+```
+---
+
+  - [📢 **APPLICATON URL!**](#-application-url)
+
+o	A link to the live, publicly accessible URL of the deployed application
+
+**url -> a2976e10833364f3188473663ff1287e-1882963728.ap-south-1.elb.amazonaws.com
+
+---
+
