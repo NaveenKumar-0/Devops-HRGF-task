@@ -2,7 +2,7 @@
 
 ---
 
-![CI/CD Pipeline](https://drive.google.com/file/d/18nvSt6brl7BnWmsl_e2h7Vq0KnBH4YHB/view?usp=sharing)  
+![CI/CD Pipeline](doc/images/Ctznv2m - Imgur.jpg)
 
 ## **📌 Table of Contents**  
 
@@ -122,7 +122,7 @@ The repository is structured for **modularity and maintainability**:
 |   ├── terraform.tf                       # Backend configuration for state
 |   └── variables.tf                       # Root-level input variables
 | 
-│  
+├── doc/images                 # images
 ├── .gitignore                 # Comprehensive gitignore file  
 ├── README.md                  # Project documentation and setup guide  
 └── VERSION                    # Tracks application versioning (Semantic Versioning)  
@@ -160,7 +160,7 @@ Before you proceed, ensure you have the following installed:
 - 🏗️ **Terraform (>=1.0)**  
 - ☸ **kubectl (latest version)**  
 - 🎭 **Kustomize**  
-- ☁ **AWS CLI & eksctl**  
+- ☁ **AWS CLI**  
 - ⚙️ **GitHub Actions configured**  
 - 🔑 **AWS IAM permissions to manage EKS**  
 
