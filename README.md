@@ -12,21 +12,14 @@
   - [**📂 Repository Structure**](#-repository-structure)
   - [**🔧 Design Choices**](#-design-choices)
   - [**🔧 Prerequisites**](#-prerequisites)
-  - [**⚙️ CI/CD Workflow**](#️-cicd-workflow)
-    - [**🔨 Build Job**](#-build-job)
-    - [**🚀 Deployment Job**](#-deployment-job)
-  - [**🏗️ Infrastructure Details**](#️-infrastructure-details)
-  - [**📦 Application Deployment Strategy**](#-application-deployment-strategy)
+  - [**⚙️ CI/CD Pipeline**](#️-cicd-workflow)
+    - [**🔨 🔨 CI Job – Build, Test & Scan**](#-build-job)
+    - [**🚀 🚀 CD Job – Deploy to Kubernetes**](#-deployment-job)
+  - [**💻 How to Run the IaC and CI/CD Pipeline**](#️-How to Run the IaC and CI/CD Pipeline)
   - [**🔄 GitOps Principles**](#-gitops-principles)
   - [**🔒 Security Best Practices**](#-security-best-practices)
   - [**📢 Notifications \& Alerts**](#-notifications--alerts)
   - [**📊 Monitoring \& Logging**](#-monitoring--logging)
-  - [**📜 Contributing**](#-contributing)
-  - [**⭐ Support \& Author**](#-support--author)
-  - [**⭐ Hit the Star!**](#-hit-the-star)
-  - [🛠️ **Author \& Community**](#️-author--community)
-  - [📧 **Let's Connect!**](#-lets-connect)
-  - [📢 **Stay Updated!**](#-stay-updated)
 
 ---
 
@@ -166,68 +159,100 @@ Before you proceed, ensure you have the following installed:
 
 ---
 
-## **🏃‍♂️ Quick Start (Local Development)**  
+---
 
-### **Option 1: Docker Compose (Recommended)**
-```bash
-# Clone the repository
-git clone https://github.com/NotHarshhaa/CI-CD_EKS-GitHub_Actions.git
-cd CI-CD_EKS-GitHub_Actions
+## **CI/CD Pipeline**
 
-# Start the application with Docker Compose
-docker-compose up --build
-
-# Access the application
-# Web UI: http://localhost:80
-# Health Check: http://localhost:80/health
-# API: POST http://localhost:80/api/calculate
-```
-
-### **Option 2: Local Node.js Development**
-```bash
-# Navigate to app directory
-cd app
-
-# Install dependencies
-npm install
-
-# Run in development mode
-npm run dev
-
-# Run tests
-npm test
-
-# Run linting
-npm run lint
-```
+The **CI/CD pipeline** automates the build, test, security scan, Docker image push, deployment to EKS, and observability stack setup using **GitHub Actions**.
 
 ---
 
-## **⚙️ CI/CD Workflow**  
+## **⚙️ Workflow Overview**
 
-The **CI/CD pipeline** automates the entire deployment process using **GitHub Actions**.  
+The pipeline has **three main jobs**:
 
-### **🔨 Build Job**  
+1️⃣ **Continuous Integration (CI)** – Build, test, and push Docker image.  
+2️⃣ **Continuous Deployment (CD)** – Deploy application to Kubernetes (EKS).  
+3️⃣ **Observability Stack** – Deploy monitoring and logging using a separate workflow.  
 
-1️⃣ **Set Up the Environment**  
+---
 
-- Install **Node.js dependencies** using `npm install`.  
-- Lint the code to ensure quality standards.  
+## **🔨 CI Job – Build, Test & Scan**
 
-2️⃣ **Run Tests**  
+1️⃣ **Checkout Code**  
 
-- Execute **unit tests** with `npm test`.  
-- Generate test reports for visibility.  
+- Uses `actions/checkout@v4` to clone the repo.  
 
-3️⃣ **Version Management**  
+2️⃣ **Setup Node.js**  
 
-- Uses **Semantic Versioning** (`major.minor.patch`).  
-- Auto-increments the version based on commit messages.  
+- Installs **Node.js 18** using `actions/setup-node@v3`.  
+- Installs app dependencies using `npm install`.  
+- Runs linting with `npm run lint`.  
 
-4️⃣ **Build & Push Docker Image**  
+3️⃣ **Run Tests**  
 
-- **Builds a Docker image** of the application.  
-- Pushes it to **Amazon Elastic Container Registry (ECR)**.  
+- Executes unit tests with `npm test`.  
+- Generates test reports for visibility.  
+
+4️⃣ **Version Management**  
+
+- Reads version from `VERSION` file.  
+- Sets semantic versioning tag (`vX.Y.Z`) for Docker image.  
+
+5️⃣ **Build & Push Docker Image**  
+
+- Builds Docker image for the application.  
+- Tags image with version and `latest`.  
+- Scans image with **Trivy** for vulnerabilities.  
+- Logs in to **DockerHub** and pushes image.  
+
+---
+
+## **🚀 CD Job – Deploy to Kubernetes**
+
+1️⃣ **Checkout Code**  
+
+- Needed for Kubernetes manifests.  
+
+2️⃣ **Install Tools**  
+
+- Installs `kubectl` and ensures AWS CLI is available.  
+
+3️⃣ **Update kubeconfig**  
+
+- Configures `kubectl` for the target EKS cluster.  
+
+4️⃣ **Deploy Application**  
+
+- Sets image tag from CI output.  
+- Applies manifests using **Kustomize**.  
+- Verifies deployment with `kubectl rollout status`.  
+
+5️⃣ **Smoke Tests**  
+
+- Fetches ELB hostname from ingress.  
+- Performs simple HTTP request to confirm service is accessible.  
+
+6️⃣ **Slack Notifications**  
+
+- Sends deployment success/failure notifications using `action-slack@v3`.  
+
+---
+
+## **📊 Observability Job**
+
+- Deploys monitoring and logging stack using a separate workflow (`observability.yaml`).  
+- Ensures AWS credentials and EKS cluster details are passed as secrets.  
+
+---
+
+### **💡 Notes**
+
+- Secrets like `DOCKER_USERNAME`, `AWS_ACCESS_KEY_ID`, and `SLACK_WEBHOOK` must be stored in GitHub Actions secrets.  
+- The pipeline is triggered automatically on **push to `main` branch**.  
+- Image paths and workflow references assume relative paths in the repository.  
+
+ 
 
 ---
 
@@ -259,32 +284,45 @@ The **CI/CD pipeline** automates the entire deployment process using **GitHub Ac
 
 ---
 
-## **🏗️ Infrastructure Details**  
+## **💻 How to Run the IaC and CI/CD Pipeline**  
 
-| Environment | Instance Type | Replica Count |
-|-------------|--------------|---------------|
-| **Dev**     | `t3.small`    | 1             |
-| **Staging** | `t3.medium`   | 3             |
-| **Prod**    | `t3.large`    | 3             |
+```bash
+# configure aws
+aws configure
 
-✅ **DNS Automation via Cloudflare**  
+# install terraform (if not installed)
 
-- Environment-specific subdomains:  
-  - `dev.example.com`  
-  - `staging.example.com`  
-  - `prod.example.com`  
+# Clone the repository
+git clone https://github.com/NaveenKumar-0/Devops-HRGF-task.git
+cd Devops-HRGF-task/terraform-aws-eks-clusterr
+
+# Initialize Terraform
+terraform init 
+
+# Review the execution plan:
+terraform plan
+
+# Apply the Terraform configuration:
+terraform apply --auto-approve
+```
+This will create AWS resources like VPC, EKS cluster, IAM roles, and worker nodes.
+
+After completion, note the EKS cluster name and region for CI/CD.
 
 ---
 
-## **📦 Application Deployment Strategy**  
+**Trigger the CI/CD Pipeline**
 
-This project supports **multiple deployment strategies**:  
+The pipeline is automatically triggered on push to main branch.
 
-✅ **Rolling Updates** – Default strategy, ensuring zero downtime.  
-✅ **Blue-Green Deployment** – Used in production environments.  
-✅ **Canary Deployments** – Gradual rollout for safe updates.  
+Ensure the following GitHub Secrets are set:
 
----
+```bash
+DOCKER_USERNAME / DOCKER_PASSWORD
+AWS_ACCESS_KEY_ID / AWS_SECRET_ACCESS_KEY
+AWS_REGION / EKS_CLUSTER_NAME
+SLACK_WEBHOOK
+```
 
 ## **🔄 GitOps Principles**  
 
@@ -300,11 +338,11 @@ Every infrastructure change must be made via a **Git commit**.
 
 🔐 **Secrets Management**  
 
-- Uses **AWS Secrets Manager** & GitHub Actions **encrypted secrets**.  
+- Uses GitHub Actions **encrypted secrets**.  
 
 🛡 **Container Security**  
 
-- Uses **Trivy** and **Docker Bench Security** for vulnerability scanning.  
+- Uses **Trivy** for vulnerability scanning.  
 
 🚧 **IAM & Least Privilege**  
 
@@ -317,59 +355,13 @@ Every infrastructure change must be made via a **Git commit**.
 🔔 **Slack & Email Notifications**  
 
 - **CI/CD Job Updates** – Pipeline status alerts.  
-- **DNS Updates** – Cloudflare integration for alerts.  
 
 📡 **Monitoring & Logging**  
 
-- **AWS CloudWatch** for logs & metrics.  
 - **Prometheus & Grafana** for observability.  
 
 ---
 
 ## **📊 Monitoring & Logging**  
 
-✅ **Application Logs** – Aggregated using **Fluent Bit**.  
-✅ **Infrastructure Logs** – Stored in **AWS CloudWatch Logs**.  
-✅ **Metrics Monitoring** – Tracked using **Prometheus & Grafana**.  
-
----
-
-## **📜 Contributing**  
-
-Want to contribute? Here’s how:  
-
-1. **Fork the repository** & create a new branch.  
-2. Make your changes and **commit with a descriptive message**.  
-3. Open a **Pull Request (PR)** for review.  
-
----
-
-## **⭐ Support & Author**  
-
-## **⭐ Hit the Star!**  
-
-If you find this repository helpful and plan to use it for learning, please consider giving it a star ⭐. Your support motivates me to keep improving and adding more valuable content! 🚀  
-
----
-
-## 🛠️ **Author & Community**  
-
-This project is crafted with passion by **[Harshhaa](https://github.com/NotHarshhaa)** 💡.  
-
-I’d love to hear your feedback! Feel free to open an issue, suggest improvements, or just drop by for a discussion. Let’s build a strong DevOps community together!  
-
----
-
-## 📧 **Let's Connect!**  
-
-Stay connected and explore more DevOps content with me:  
-
-[![LinkedIn](https://img.shields.io/badge/LinkedIn-%230077B5.svg?style=for-the-badge&logo=linkedin&logoColor=white)](https://linkedin.com/in/harshhaa-vardhan-reddy)  [![GitHub](https://img.shields.io/badge/GitHub-181717?style=for-the-badge&logo=github&logoColor=white)](https://github.com/NotHarshhaa)  [![Telegram](https://img.shields.io/badge/Telegram-26A5E4?style=for-the-badge&logo=telegram&logoColor=white)](https://t.me/prodevopsguy)  [![Dev.to](https://img.shields.io/badge/Dev.to-0A0A0A?style=for-the-badge&logo=dev.to&logoColor=white)](https://dev.to/notharshhaa)  [![Hashnode](https://img.shields.io/badge/Hashnode-2962FF?style=for-the-badge&logo=hashnode&logoColor=white)](https://hashnode.com/@prodevopsguy)  
-
----
-
-## 📢 **Stay Updated!**  
-
-Want to stay up to date with the latest DevOps trends, best practices, and project updates? Follow me on my blogs and social channels!  
-
-![Follow Me](https://imgur.com/2j7GSPs.png)
+✅ **Metrics Monitoring** – Tracked using **Prometheus & Grafana**. 
