@@ -283,16 +283,24 @@ The pipeline has **three main jobs**:
 
 ---
 
-## **📦 Run Iaccode & cicd pipeline**  
+## **📦 Run Iaccode & cicd pipeline** 
+
+Folk the repo   into your github account
+
 
 ```bash
+#update distro packages ( apt or yum or dnf)
+
 # configure aws
+curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
+unzip awscliv2.zip
+sudo ./aws/install
 aws configure
 
-# install terraform (if not installed)
+# install terraform (if not installed) ( ref for ubuntu - https://github.com/NaveenKumar-0/installlation-scripts.git -> ubuntu-terraform.sh )
 
 # Clone the repository
-git clone https://github.com/NaveenKumar-0/Devops-HRGF-task.git
+git clone https://github.com/{{githubusername}}/Devops-HRGF-task.git
 cd Devops-HRGF-task/terraform-aws-eks-clusterr
 
 # Initialize Terraform
@@ -303,6 +311,8 @@ terraform plan
 
 # Apply the Terraform configuration:
 terraform apply --auto-approve
+
+cd ~/Devops-HRGF-task/
 ```
 This will create AWS resources like VPC, EKS cluster, IAM roles, and worker nodes.
 
@@ -312,9 +322,48 @@ After completion, note the EKS cluster name and region for CI/CD.
 
 **Trigger the CI/CD Pipeline**
 
+```bash
+
+#npm installaion
+apt install npm -y
+
+curl -LO "https://dl.k8s.io/release/$(curl -L -s https://dl.k8s.io/release/stable.txt)/bin/linux/amd64/kubectl"
+chmod +x kubectl
+mv kubectl /usr/local/bin/kubectl
+
+#change the version
+sed -i 's/"version": "3.0.0"/"version": "4.0.0"/' app/package.json && sed -i 's/3.0.0/4.0.0/' VERSION
+
+#regenerate with updated version
+cd ~/Devops-HRGF-task/app
+npm install
+cd 
+
+```
+
+and then 
+```bash
+cd ~/Devops-HRGF-task/
+
+git init
+git branch hot-fix
+git checkout hot-fix
+git add
+git commit -m "version 4.0.0 is ready"
+git remote add origin https://github.com/{{githubusername}}/Devops-HRGF-task.git
+git push origin hot-fix
+git tag origin v4.0.0
+git push origin hot-fix
+
+```
+
+On GitHub, open a PR from hot-fix → main.
+
+Review the changes, then merge into main.
+
 The pipeline is automatically triggered on push to main branch.
 
-Ensure the following GitHub Secrets are set:
+**Ensure the following GitHub Secrets are set:**
 
 ```bash
 DOCKER_USERNAME / DOCKER_PASSWORD
