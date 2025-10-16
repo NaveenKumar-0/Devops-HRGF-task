@@ -2,7 +2,7 @@
 
 ---
 
-![CI/CD Pipeline](doc/images/Ctznv2m - Imgur.jpg)
+![CI/CD Pipeline](doc/images/Ctznv2m%20-%20Imgur.jpg)
 
 ## **📌 Table of Contents**  
 
