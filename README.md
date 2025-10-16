@@ -459,7 +459,7 @@ Replace <NODE_IP> with any of the above public IPs.
 ```
 ---
 
-  - [📢 **APPLICATION URL!**](#-application-url)
+  - [📢 **APPLICATION URL**](#-application-url)
 
 o	A link to the live, publicly accessible URL of the deployed application
 
