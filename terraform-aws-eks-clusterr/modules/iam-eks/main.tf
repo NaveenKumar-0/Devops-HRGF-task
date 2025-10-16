@@ -57,3 +57,8 @@ resource "aws_iam_role_policy_attachment" "eks_ecr_attach" {
   role       = aws_iam_role.eks_node_role.name
 }
 
+resource "aws_iam_role_policy_attachment" "eks_console_view" {
+  policy_arn = "arn:aws:iam::aws:policy/AmazonEKSViewPolicy"
+  role       = aws_iam_role.eks_cluster_role.name
+}
+
