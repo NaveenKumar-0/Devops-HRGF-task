@@ -108,38 +108,12 @@ jobs:
 
           kubectl label configmap grafana-dashboards grafana_dashboard=1 -n monitoring --overwrite
 
-      # ---------------------------
-      # Deploy CloudWatch Container Insights (Metrics)
-      # ---------------------------
-
-      - name: Deploy CloudWatch Container Insights
-        run: |
-          helm repo add amazon-cloudwatch https://aws.github.io/eks-charts
-          helm repo update
-          helm upgrade --install cloudwatch-agent amazon-cloudwatch/aws-cloudwatch-metrics \
-            --namespace amazon-cloudwatch --create-namespace \
-            --set clusterName=${{ secrets.eks_cluster_name }} \
-            --set serviceAccount.create=true \
-            --set metrics.enabled=true \
-            --set logs.enabled=true
-
-      # ---------------------------
-      # Deploy Fluent Bit for CloudWatch Logs
-      # ---------------------------
-      - name: Deploy Fluent Bit
-        run: |
-          helm upgrade --install fluent-bit amazon-cloudwatch/aws-for-fluent-bit \
-            --namespace amazon-cloudwatch --create-namespace \
-            --set awsRegion=${{ secrets.aws_region }} \
-            --set clusterName=${{ secrets.eks_cluster_name }} \
-            --set serviceAccount.create=true
+     
 
       - name: Verify Observability Stack
         run: |
           kubectl get pods -n monitoring
-          kubectl get pods -n amazon-cloudwatch
           kubectl get svc -n monitoring
-          kubectl get svc -n amazon-cloudwatch
 
       - name: Access Grafana & Prometheus
         run: |
