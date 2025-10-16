@@ -197,7 +197,8 @@ The pipeline has **three main jobs**:
 3️⃣ **Observability Stack** – Deploy monitoring and logging using a separate workflow.  
 
 
-### **🔨 Build Job**  
+### **🔨 Build Job**
+---
 
 1️⃣ **Checkout Code**  
 
@@ -227,8 +228,10 @@ The pipeline has **three main jobs**:
 - Logs in to **DockerHub** and pushes image.  
 
 ---
+---
 
-### **🚀 Deployment Job**  
+### **🚀 Deployment Job**
+---
 
 1️⃣ **Checkout Code**  
 
@@ -258,55 +261,27 @@ The pipeline has **three main jobs**:
 - Sends deployment success/failure notifications using `action-slack@v3`.  
 
 ---
+---
 
 ## **📊 Observability Job**
+---
 
 - Deploys monitoring and logging stack using a separate workflow (`observability.yaml`).  
 - Ensures AWS credentials and EKS cluster details are passed as secrets.  
 
 ---
+---
 
 ### **💡 Notes**
-
 - Secrets like `DOCKER_USERNAME`, `AWS_ACCESS_KEY_ID`, and `SLACK_WEBHOOK` must be stored in GitHub Actions secrets.  
 - The pipeline is triggered automatically on **push to `main` branch**.  
 - Image paths and workflow references assume relative paths in the repository.  
-
- 
-
----
-
-### **🚀 Deployment Job**  
-
-1️⃣ **Terraform Setup**  
-
-- Initializes Terraform with `terraform init`.  
-- Ensures correct **state management**.  
-
-2️⃣ **Infrastructure Provisioning**  
-
-- Executes `terraform plan` and `terraform apply`.  
-- Deploys EKS clusters, networking, and storage.  
-
-3️⃣ **Kubernetes Configuration**  
-
-- Configures `kubectl` to interact with the cluster.  
-- Applies `Kustomize` overlays for environment-specific settings.  
-
-4️⃣ **Ingress Controller Setup**  
-
-- Uses **Helm** to install **NGINX Ingress**.  
-
-5️⃣ **Application Deployment**  
-
-- Deploys the latest **Docker image** to Kubernetes.  
-- Exposes the service via **Ingress and Load Balancer**.  
-
+---  
 ---
 
 ## **📦 Run Iaccode & cicd pipeline** 
 
-Folk the repo   into your github account
+Folk the repo -> https://github.com/NaveenKumar-0/Devops-HRGF-task <- into github account
 
 
 ```bash
