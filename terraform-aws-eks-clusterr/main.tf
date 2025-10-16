@@ -18,6 +18,7 @@ module "eks" {
   min_capacity            = var.min_capacity
   cluster_iam_role_arn    = module.iam.cluster_iam_role_arn
   node_group_iam_role_arn = module.iam.nodegroup_iam_role_arn
+  key_name = var.key_name
 }
 
 
