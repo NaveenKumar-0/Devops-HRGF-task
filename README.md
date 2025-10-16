@@ -464,7 +464,7 @@ Replace <NODE_IP> with any of the above public IPs.
 
 o	A link to the live, publicly accessible URL of the deployed application
 
-**url -> a2976e10833364f3188473663ff1287e-1882963728.ap-south-1.elb.amazonaws.com
+**![URL](a2976e10833364f3188473663ff1287e-1882963728.ap-south-1.elb.amazonaws.com)
 
 ---
 
