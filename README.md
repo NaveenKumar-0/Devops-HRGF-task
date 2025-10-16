@@ -12,7 +12,7 @@
   - [**📂 Repository Structure**](#-repository-structure)
   - [**Design Choices**](#-design-choices)
   - [**🔧 Prerequisites**](#-prerequisites)
-  - [**CI/CD Pipeline**](#-cicd-pipeline)
+  - [**⚙️ CI/CD Workflow**](#️-cicd-workflow)
   - [**🔨 CI Job – Build, Test & Scan**](#-ci-job-build-test-scan)
   - [**🚀 CD Job – Deploy to Kubernetes**](#-cd-job-deploy-to-kubernetes)
   - [**💻 How to Run the IaC and CI/CD Pipeline**](#-how-to-run-the-iac-and-ci/cd-pipeline)
@@ -161,7 +161,7 @@ Before you proceed, ensure you have the following installed:
 
 ---
 
-## **CI/CD Pipeline**
+## **⚙️ CI/CD Workflow**
 
 The **CI/CD pipeline** automates the build, test, security scan, Docker image push, deployment to EKS, and observability stack setup using **GitHub Actions**.
 
