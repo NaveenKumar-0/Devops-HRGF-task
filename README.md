@@ -13,9 +13,9 @@
   - [**Design Choices**](#-design-choices)
   - [**🔧 Prerequisites**](#-prerequisites)
   - [**⚙️ CI/CD Workflow**](#️-cicd-workflow)
-  - [**🔨 CI Job – Build, Test & Scan**](#-ci-job-build-test-scan)
-  - [**🚀 CD Job – Deploy to Kubernetes**](#-cd-job-deploy-to-kubernetes)
-  - [**💻 How to Run the IaC and CI/CD Pipeline**](#-how-to-run-the-iac-and-ci/cd-pipeline)
+     - [**🔨 Build Job**](#-build-job)
+     - [**🚀 Deployment Job**](#-deployment-job)
+  - [**📦 Run Iaccode \& cicd pipeline**](#-run-iaccode--cicd-pipeline)
   - [**🔄 GitOps Principles**](#-gitops-principles)
   - [**🔒 Security Best Practices**](#-security-best-practices)
   - [**📢 Notifications \& Alerts**](#-notifications--alerts)
@@ -175,9 +175,8 @@ The pipeline has **three main jobs**:
 2️⃣ **Continuous Deployment (CD)** – Deploy application to Kubernetes (EKS).  
 3️⃣ **Observability Stack** – Deploy monitoring and logging using a separate workflow.  
 
----
 
-## **🔨 CI Job – Build, Test & Scan**
+### **🔨 Build Job**  
 
 1️⃣ **Checkout Code**  
 
@@ -208,7 +207,7 @@ The pipeline has **three main jobs**:
 
 ---
 
-## **🚀 CD Job – Deploy to Kubernetes**
+### **🚀 Deployment Job**  
 
 1️⃣ **Checkout Code**  
 
@@ -284,7 +283,7 @@ The pipeline has **three main jobs**:
 
 ---
 
-## **💻 How to Run the IaC and CI/CD Pipeline**  
+## **📦 Run Iaccode & cicd pipeline**  
 
 ```bash
 # configure aws
