@@ -9,6 +9,4 @@ variable "max_capacity" {}
 variable "min_capacity" {}
 variable "cluster_iam_role_arn" {}
 variable "node_group_iam_role_arn" {}
-variable "key_name" {}
-
 
