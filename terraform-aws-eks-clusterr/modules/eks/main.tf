@@ -45,6 +45,29 @@ resource "aws_security_group" "worker_nodes_sg" {
   }
 }
 
+resource "aws_launch_template" "eks_node_lt" {
+  name_prefix   = "${var.cluster_name}-lt"
+  description   = "Launch template for EKS worker nodes"
+  instance_type = var.node_instance_type
+
+  # Attach the custom SG
+  vpc_security_group_ids = [aws_security_group.worker_nodes_sg.id]
+
+  # Optional: if you want SSH access to nodes
+  key_name = var.key_name
+
+  # Tags for EC2 instances
+  tag_specifications {
+    resource_type = "instance"
+    tags = {
+      Name = "${var.cluster_name}-worker-node"
+    }
+  }
+
+  lifecycle {
+    create_before_destroy = true
+  }
+}
 
 resource "aws_eks_node_group" "this" {
   cluster_name    = aws_eks_cluster.this.name
@@ -60,10 +83,10 @@ resource "aws_eks_node_group" "this" {
 
   instance_types = [var.node_instance_type]
   # Attach the new SG
-  resources_vpc_config {
-    subnet_ids         = var.public_subnet_ids
-    security_group_ids = [aws_security_group.worker_nodes_sg.id]
+  launch_template {
+    id      = aws_launch_template.eks_node_lt.id
+    version = "$Latest"
   }
-  depends_on = [aws_eks_cluster.this]
+  depends_on = [aws_eks_cluster.this,aws_launch_template.eks_node_lt]
 }
 
