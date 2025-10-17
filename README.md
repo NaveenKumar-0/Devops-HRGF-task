@@ -293,6 +293,8 @@ Folk the repo -> https://github.com/NaveenKumar-0/Devops-HRGF-task <- into githu
 ```bash
 #update distro packages ( apt or yum or dnf)
 
+#install unzip
+apt install unzip -y ( if ubuntu )
 # configure aws
 curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
 unzip awscliv2.zip
@@ -302,7 +304,7 @@ aws configure
 # install terraform (if not installed) ( ref for ubuntu - https://github.com/NaveenKumar-0/installlation-scripts.git -> ubuntu-terraform.sh )
 
 # Clone the repository
-git clone https://github.com/{{githubusername}}/Devops-HRGF-task.git
+git clone https://github.com/{{githubusername}}/Devops-HRGF-task.git  ( change username )
 cd Devops-HRGF-task/terraform-aws-eks-clusterr
 
 # Initialize Terraform
@@ -312,7 +314,7 @@ terraform init
 terraform plan
 
 # Apply the Terraform configuration:
-terraform apply --auto-approve
+terraform apply --auto-approve  ( takes 8 - 14 min to complete cluster creation )
 
 cd ~/Devops-HRGF-task/
 ```
@@ -335,6 +337,7 @@ chmod +x kubectl
 mv kubectl /usr/local/bin/kubectl
 
 #change the version
+cat VERSION #to know the version
 sed -i 's/"version": "3.0.0"/"version": "4.0.0"/' app/package.json && sed -i 's/3.0.0/4.0.0/' VERSION
 
 #regenerate with updated version
@@ -350,7 +353,7 @@ cd ~/Devops-HRGF-task/
 git init
 git branch hot-fix
 git checkout hot-fix
-git add
+git add app/ VERSION
 git commit -m "version 4.0.0 is ready"
 git remote add origin https://github.com/{{githubusername}}/Devops-HRGF-task.git
 git push origin hot-fix
@@ -377,7 +380,9 @@ SLACK_WEBHOOK
 Note for Users:
 
 If you clone this repo, add your own DOCKER_USERNAME and DOCKER_PASSWORD as GitHub Secrets so the CI/CD pipeline can push images to your Docker Hub.
-Kubernetes manifest uses my image naveenk0/hello-world:latest — update it with yours if needed.
+Kubernetes manifest uses my image naveenk0/hello-world:latest — **update it with yours if needed**.
+
+
 
 ## **🔄 GitOps Principles**  
 
