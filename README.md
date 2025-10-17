@@ -338,7 +338,7 @@ mv kubectl /usr/local/bin/kubectl
 
 #change the version
 cat VERSION #to know the version
-sed -i 's/"version": "3.0.0"/"version": "4.0.0"/' app/package.json && sed -i 's/3.0.0/4.0.0/' VERSION
+sed -i 's/"version": "4.0.0"/"version": "5.0.0"/' app/package.json && sed -i 's/4.0.0/5.0.0/' VERSION
 
 #regenerate with updated version
 cd ~/Devops-HRGF-task/app
@@ -354,11 +354,12 @@ git init
 git branch hot-fix
 git checkout hot-fix
 git add app/ VERSION
-git commit -m "version 4.0.0 is ready"
+git commit -m "version 5.0.0 is ready"
 git remote add origin https://github.com/{{githubusername}}/Devops-HRGF-task.git
 git push origin hot-fix
-git tag origin v4.0.0
+git tag v5.0.0
 git push origin hot-fix
+git push origin v5.0.0
 
 ```
 
